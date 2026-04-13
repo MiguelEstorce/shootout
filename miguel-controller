@@ -1,0 +1,147 @@
+package controller;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import model.DAO;
+import model.JavaBeans;
+
+/**
+ * Servlet implementation class Controller
+ */
+@WebServlet({"/main","/insert","/delete","/update","/select"})
+public class Controller extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	DAO dao = new DAO();
+	JavaBeans produto = new JavaBeans();
+
+    /**
+     * Default constructor. 
+     */
+    public Controller() {
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
+		//dao.testeConexao();
+				String action = request.getServletPath();
+				System.out.println(action);
+				
+				if(action.equals("/main")) {
+					produtos(request, response);
+				}else if(action.equals("/delete")) {
+			        removerProduto(request, response);
+			    }else if(action.equals("/update")) {
+			        editarProduto(request, response);
+			    }else if(action.equals("/select")) {
+					listarProduto(request,response);
+				}
+			    
+			    else {
+			    	//response.sendRedirect("inicial.html");
+			    	System.out.println("ACTION: " + action);
+			    }
+	}
+	protected void produtos(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		ArrayList<JavaBeans> lista = dao.listarProduto();
+		
+		request.setAttribute("produtos", lista);
+		RequestDispatcher rd  = request.getRequestDispatcher("inicial.html");
+		rd.forward(request, response);
+		/*for(int i = 0; i <lista.size(); i++) {
+			System.out.println(lista.get(i).getIdcon());
+			System.out.println(lista.get(i).getNome());
+			System.out.println(lista.get(i).getFone());
+			System.out.println(lista.get(i).getEmail());
+		}*/
+		
+	}
+	
+	protected void listarProduto(HttpServletRequest request, HttpServletResponse response) 
+	        throws ServletException, IOException {
+	    String idcon = request.getParameter("idcon"); 
+
+	    produto.setIdcon(idcon);  
+	    dao.selecionarProduto(produto);  
+	    request.setAttribute("idcon", produto.getIdcon());
+	    request.setAttribute("nome", produto.getNome());
+	    request.setAttribute("preco", produto.getPreco());
+	    request.setAttribute("quantidade", produto.getQuantidade());
+	    request.setAttribute("descricao", produto.getDescricao());
+
+	    System.out.println("ID recebido: " + request.getParameter("idcon"));
+	    
+	    RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
+	    rd.forward(request, response);
+	}
+	//--------------------------------------------------------------------
+	
+	
+	
+	//---------------------------------------------------------------------------------------------------------------------------
+	
+	//DELETAR PRODUTO ↓↓
+	protected void removerProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String idcon = request.getParameter("idcon");
+		produto.setIdcon(idcon);
+		dao.deletarProduto(produto);
+		response.sendRedirect("remover.jsp");
+}
+	
+	
+	//---------------------------------------------------------------------------------------------------------------------------
+	//EDITAR
+	
+	protected void editarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		System.out.println("CHEGOU NO EDITAR ");
+	    
+		JavaBeans produto = new JavaBeans();
+
+		produto.setIdcon(request.getParameter("idcon"));
+	    produto.setNome(request.getParameter("nome"));
+	    produto.setPreco(request.getParameter("preco"));
+	    produto.setDescricao(request.getParameter("descricao"));
+	    produto.setQuantidade(request.getParameter("quantidade"));
+	    
+	    
+
+	    dao.editarProduto(produto);
+
+	    response.sendRedirect("editar.jsp");
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+
+	    String id = request.getParameter("id");
+	    String nome = request.getParameter("nome");
+	    String descricao = request.getParameter("descricao");
+	    String quantidade = request.getParameter("quantidade");
+	    String preco = request.getParameter("preco");
+	    
+	    System.out.println("ID: " + id);
+	    System.out.println("Nome: " + nome);
+	    System.out.println("Descricao: " + descricao);
+	    System.out.println("Quantidade: " + quantidade);
+	    System.out.println("Preco: " + preco);
+	    
+	    //System.out.println("ID: " + id); // teste no console
+
+	    // aqui você chama o DAO para atualizar
+
+	}
+	
+}
