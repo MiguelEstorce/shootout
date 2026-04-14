@@ -49,7 +49,7 @@ span {
 						href="cadastro.html">Cadastrar produtos</a></li>
 
 					<li class="nav-item"><a class="nav-link text-white"
-						href="delete">Remover produtos</a></li>
+						href="remover.jsp">Remover produtos</a></li>
 
 				</ul>
 			</div>
@@ -61,21 +61,20 @@ span {
 		<h2 class="h1 mt-3 mb-3">Editar Produtos</h2>
 
 		<!-- 🔎 FORMULÁRIO DE BUSCA -->
-		<form action="select" method="get">
+		<form action="edit" method="get">
 			<div class="input-group mb-3">
-				<input type="text" name="idcon" class="form-control"
+				<input type="text" name="id" class="form-control"
 					placeholder="Digite o ID do produto">
 				<button type="submit" class="btn btn-primary">Buscar</button>
 			</div>
-
 		</form>
 
 		<!-- 📝 FORMULÁRIO DE EDIÇÃO -->
 		<form action="update" method="post">
-			
+
 			<input type="hidden" name="idcon"
-			value="<%= request.getAttribute("idcon") != null ? request.getAttribute("idcon") : "" %>">
-			
+				value="<%=request.getAttribute("idcon") != null ? request.getAttribute("idcon") : ""%>">
+
 			<div class="mb-3">
 				<input type="text" class="form-control" name="nome"
 					placeholder="Digite o Nome do Produto"
