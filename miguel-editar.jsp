@@ -70,7 +70,7 @@ span {
 		</form>
 
 		<!-- 📝 FORMULÁRIO DE EDIÇÃO -->
-		<form action="update" method="post">
+		<form action="buscarEditar" method="post">
 
 			<input type="hidden" name="idcon"
 				value="<%=request.getAttribute("idcon") != null ? request.getAttribute("idcon") : ""%>">
