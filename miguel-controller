@@ -12,136 +12,163 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.DAO;
 import model.JavaBeans;
 
-/**
- * Servlet implementation class Controller
- */
-@WebServlet({"/main","/insert","/delete","/update","/select"})
+@WebServlet({"/estoque", "/cadastro", "/delete", "/edit", "/update","/remover","/buscarRemover"})
 public class Controller extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	DAO dao = new DAO();
-	JavaBeans produto = new JavaBeans();
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor. 
-     */
-    public Controller() {
-        // TODO Auto-generated constructor stub
+    DAO dao = new DAO();
+
+    // =========================
+    // GET (NAVEGAÇÃO / BUSCA)
+    // =========================
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String action = request.getServletPath();
+
+        if(action.equals("/estoque")) {
+            listarProdutos(request, response);
+
+        } else if(action.equals("/edit")) {
+            selecionarProduto(request, response);
+
+        } else if(action.equals("/delete")) {
+            deletarProduto(request, response);
+
+        } else if(action.equals("/buscarRemover")) {
+           buscarParaRemover(request, response);
+        }else {
+            response.sendRedirect("estoque");
+        }
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
-		//dao.testeConexao();
-				String action = request.getServletPath();
-				System.out.println(action);
-				
-				if(action.equals("/main")) {
-					produtos(request, response);
-				}else if(action.equals("/delete")) {
-			        removerProduto(request, response);
-			    }else if(action.equals("/update")) {
-			        editarProduto(request, response);
-			    }else if(action.equals("/select")) {
-					listarProduto(request,response);
-				}
-			    
-			    else {
-			    	//response.sendRedirect("inicial.html");
-			    	System.out.println("ACTION: " + action);
-			    }
-	}
-	protected void produtos(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		ArrayList<JavaBeans> lista = dao.listarProduto();
-		
-		request.setAttribute("produtos", lista);
-		RequestDispatcher rd  = request.getRequestDispatcher("inicial.html");
-		rd.forward(request, response);
-		/*for(int i = 0; i <lista.size(); i++) {
-			System.out.println(lista.get(i).getIdcon());
-			System.out.println(lista.get(i).getNome());
-			System.out.println(lista.get(i).getFone());
-			System.out.println(lista.get(i).getEmail());
-		}*/
-		
-	}
-	
-	protected void listarProduto(HttpServletRequest request, HttpServletResponse response) 
-	        throws ServletException, IOException {
-	    String idcon = request.getParameter("idcon"); 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	    produto.setIdcon(idcon);  
-	    dao.selecionarProduto(produto);  
-	    request.setAttribute("idcon", produto.getIdcon());
-	    request.setAttribute("nome", produto.getNome());
-	    request.setAttribute("preco", produto.getPreco());
-	    request.setAttribute("quantidade", produto.getQuantidade());
-	    request.setAttribute("descricao", produto.getDescricao());
+        String action = request.getServletPath();
 
-	    System.out.println("ID recebido: " + request.getParameter("idcon"));
-	    
-	    RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
-	    rd.forward(request, response);
-	}
-	//--------------------------------------------------------------------
-	
-	
-	
-	//---------------------------------------------------------------------------------------------------------------------------
-	
-	//DELETAR PRODUTO ↓↓
-	protected void removerProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String idcon = request.getParameter("idcon");
-		produto.setIdcon(idcon);
-		dao.deletarProduto(produto);
-		response.sendRedirect("remover.jsp");
-}
-	
-	
-	//---------------------------------------------------------------------------------------------------------------------------
-	//EDITAR
-	
-	protected void editarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(action.equals("/cadastro")) {
+            inserirProduto(request, response);
 
-		System.out.println("CHEGOU NO EDITAR ");
-	    
-		JavaBeans produto = new JavaBeans();
+        } else if(action.equals("/update")) {
+            atualizarProduto(request, response);
+        }
+    }
 
-		produto.setIdcon(request.getParameter("idcon"));
-	    produto.setNome(request.getParameter("nome"));
-	    produto.setPreco(request.getParameter("preco"));
-	    produto.setDescricao(request.getParameter("descricao"));
-	    produto.setQuantidade(request.getParameter("quantidade"));
-	    
-	    
+    // =========================
+    // LISTAR
+    // =========================
+    protected void listarProdutos(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	    dao.editarProduto(produto);
+        ArrayList<JavaBeans> lista = dao.listarProduto();
 
-	    response.sendRedirect("editar.jsp");
-	}
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("produtos", lista);
 
-	    String id = request.getParameter("id");
-	    String nome = request.getParameter("nome");
-	    String descricao = request.getParameter("descricao");
-	    String quantidade = request.getParameter("quantidade");
-	    String preco = request.getParameter("preco");
-	    
-	    System.out.println("ID: " + id);
-	    System.out.println("Nome: " + nome);
-	    System.out.println("Descricao: " + descricao);
-	    System.out.println("Quantidade: " + quantidade);
-	    System.out.println("Preco: " + preco);
-	    
-	    //System.out.println("ID: " + id); // teste no console
+        RequestDispatcher rd = request.getRequestDispatcher("estoque.jsp");
+        rd.forward(request, response);
+    }
 
-	    // aqui você chama o DAO para atualizar
+    // =========================
+    // INSERIR
+    // =========================
+    protected void inserirProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	}
-	
+        JavaBeans produto = new JavaBeans();
+
+        produto.setNome(request.getParameter("nome"));
+        produto.setDescricao(request.getParameter("descricao"));
+        produto.setQuantidade(Integer.parseInt(request.getParameter("quantidade")));
+        produto.setPreco(Double.parseDouble(request.getParameter("preco")));
+
+        dao.inserirProdutos(produto);
+
+        response.sendRedirect("estoque");
+    }
+
+    // =========================
+    // SELECIONAR (EDITAR)
+    // =========================
+    protected void selecionarProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String id = request.getParameter("id");
+
+        JavaBeans produto = new JavaBeans();
+        produto.setIdcon(id);
+
+        dao.selecionarProduto(produto);
+
+        request.setAttribute("produto", produto);
+
+        RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
+        rd.forward(request, response);
+    }
+
+    // =========================
+    // ATUALIZAR
+    // =========================
+    protected void atualizarProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        JavaBeans produto = new JavaBeans();
+
+        String id = request.getParameter("id");
+        String nome = request.getParameter("nome");
+        String descricao = request.getParameter("descricao");
+        String quantidade = request.getParameter("quantidade");
+        String preco = request.getParameter("preco");
+
+        // 🔥 VALIDAÇÃO (evita erro 500)
+        if(id == null || id.isEmpty() ||
+           quantidade == null || quantidade.isEmpty() ||
+           preco == null || preco.isEmpty()) {
+
+            System.out.println("Dados inválidos!");
+            response.sendRedirect("estoque");
+            return;
+        }
+
+        produto.setIdcon(id);
+        produto.setNome(nome);
+        produto.setDescricao(descricao);
+        produto.setQuantidade(Integer.parseInt(quantidade));
+        produto.setPreco(Double.parseDouble(preco));
+
+        dao.editarProduto(produto);
+
+        response.sendRedirect("estoque");
+    }
+
+    // =========================
+    // DELETAR
+    // =========================
+    protected void deletarProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        JavaBeans produto = new JavaBeans();
+
+        produto.setIdcon(request.getParameter("id"));
+
+        dao.deletarProduto(produto);
+
+        response.sendRedirect("estoque");
+    }
+    //-------------------------------------------------------
+    protected void buscarParaRemover(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String id = request.getParameter("id");
+
+        JavaBeans produto = new JavaBeans();
+        produto.setIdcon(id);
+
+        dao.selecionarProduto(produto);
+
+        request.setAttribute("produto", produto);
+
+        RequestDispatcher rd = request.getRequestDispatcher("remover.jsp");
+        rd.forward(request, response);
+    }
 }
