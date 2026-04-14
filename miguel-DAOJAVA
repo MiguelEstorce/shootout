@@ -8,145 +8,152 @@ import java.util.ArrayList;
 
 public class DAO {
 
-	// Parâmetros de conexão
-	private String driver = "com.mysql.cj.jdbc.Driver";
-	private String url = "jdbc:mysql://127.0.0.1:3306/shootout?useTimezone=true&serverTimezone=UTC";
-	private String user = "root";
-	private String password = "";
+    // Conexão
+    private String driver = "com.mysql.cj.jdbc.Driver";
+    private String url = "jdbc:mysql://127.0.0.1:3306/shootout?useTimezone=true&serverTimezone=UTC";
+    private String user = "root";
+    private String password = "migueldados";
 
-	// Método de conexão
-	private Connection conectar() {
-		Connection con = null;
-		try {
-			Class.forName(driver);
-			con = DriverManager.getConnection(url,user,password);
-			return con;
-			
-		} catch (Exception e) {
-			System.out.println(e);
-			return null;
-		}
-	}
-//-----------------------------------------------------------------------------------------------
+    private Connection conectar() {
+        Connection con = null;
+        try {
+            Class.forName(driver);
+            con = DriverManager.getConnection(url, user, password);
+            return con;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 
-	// Teste de conexão
-	public void testeConexao() {
-		try {
-			Connection con = conectar();
-			System.out.println(con); // mostrar se conecta com o banco
-			con.close();
-			
-		} catch (Exception e) {
-			  System.out.println(e);
-		}
-	}
-//-----------------------------------------------------------------------------------------------
+    // TESTE CONEXÃO
+    public void testeConexao() {
+        try {
+            Connection con = conectar();
+            System.out.println(con);
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
-//-----------------------------------------------------------------------------------------------
-	public ArrayList<JavaBeans> listarProduto() {
-	    ArrayList<JavaBeans> produtos = new ArrayList<>();
+        // LISTAR PRODUTOS
+    
+    public ArrayList<JavaBeans> listarProduto() {
 
-	    String read = "select * from produto order by nome";
-	    try {
-	        Connection con = conectar();
-	        PreparedStatement pst = con.prepareStatement(read);
-	        ResultSet rs = pst.executeQuery();
+        ArrayList<JavaBeans> lista = new ArrayList<>();
 
-	        while (rs.next()) {
-	        	String idcon = rs.getString(1);
-	            String nome = rs.getString(2);
-	            String preco = rs.getString(3);
-	            String descricao = rs.getString(4); 
-	            String quantidade = rs.getString(5);
+        String sql = "SELECT * FROM produto ORDER BY nome";
 
-	            produtos.add(new JavaBeans(idcon,nome,preco,descricao,quantidade));
-	        }
+        try (Connection con = conectar();
+             PreparedStatement pst = con.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
 
-	        con.close();
-	        return produtos;
+            while (rs.next()) {
 
-	    } catch (Exception e) {
-	        System.out.println(e);
-	        return null;
-	    }
-	}
-	
-//------------------------------------------------------------------------------------------------
-//DELETAR PRODUTO
-	public void deletarProduto(JavaBeans produto) {
-		String delete = "delete from produto where idcon=?";
-		
-		try {
-			Connection con = conectar();
-			PreparedStatement pst = con.prepareStatement(delete);
-			pst.setString(1, produto.getIdcon());
-			pst.executeUpdate();
-			
-			con.close();
-		}catch (Exception e) {
-			System.out.println(e);
-		}
-	}
-//------------------------------------------------------------------------------------------------
-	// EDITAR PRODUTO
-	public void editarProduto(JavaBeans produto) {
+                JavaBeans p = new JavaBeans();
 
-	    String edit = "update produto set nome=?,descricao=?,quantidade=?,preco=? where idcon=?";
+                p.setIdcon(rs.getString("idcon"));
+                p.setNome(rs.getString("nome"));
+                p.setDescricao(rs.getString("descricao"));
+                p.setQuantidade(rs.getInt("quantidade"));
+                p.setPreco(rs.getDouble("preco"));
 
-	    try {
-	        Connection con = conectar();
-	        PreparedStatement pst = con.prepareStatement(edit);
+                lista.add(p);
+            }
 
-	        String qtd = produto.getQuantidade();
-	        String preco = produto.getPreco();
-	        String id = produto.getIdcon();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
-	        // 🔥 VALIDAÇÃO IMPORTANTE
-	        if (id == null || id.isEmpty() ||
-	            qtd == null || qtd.isEmpty() ||
-	            preco == null || preco.isEmpty()) {
+        return lista;
+    }
+    
+    public void inserirProdutos(JavaBeans produto) {
 
-	            System.out.println("Dados inválidos!");
-	            System.out.println("ID: " + id);
-	            System.out.println("Qtd: " + qtd);
-	            System.out.println("Preco: " + preco);
-	            return;
-	        }
+        String sql = "INSERT INTO produto (nome, descricao, quantidade, preco) VALUES (?, ?, ?, ?)";
 
-	        pst.setString(1, produto.getNome());
-	        pst.setString(2, produto.getDescricao());
-	        pst.setInt(3, Integer.parseInt(qtd));
-	        pst.setDouble(4, Double.parseDouble(preco));
-	        pst.setString(5, id);
+        try (Connection con = conectar();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-	        pst.executeUpdate();
+            pst.setString(1, produto.getNome());
+            pst.setString(2, produto.getDescricao());
+            pst.setInt(3, produto.getQuantidade());
+            pst.setDouble(4, produto.getPreco());
 
-	        con.close();
-	    } catch (Exception e) {
-	        System.out.println(e);
-	    }
-	}
-	
-	public void selecionarProduto(JavaBeans produto) {
-		String read2 = "SELECT idcon, nome, descricao, quantidade, preco FROM produto WHERE idcon = ?";
-	    try {
-	        Connection con = conectar();
-	        PreparedStatement pst = con.prepareStatement(read2);
-	        
-	        pst.setString(1, produto.getIdcon());
-	        ResultSet rs = pst.executeQuery();
+            pst.executeUpdate();
 
-	        while(rs.next()) {
-	            produto.setIdcon(rs.getString("idcon"));
-	            produto.setNome(rs.getString("nome"));
-	            produto.setDescricao(rs.getString("descricao"));
-	            produto.setQuantidade(rs.getString("quantidade"));
-	            produto.setPreco(rs.getString("preco"));
-	        }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
-	        con.close();
-	    } catch (Exception e) {
-	        System.out.println(e);
-	    }
-	}
+    // ======================
+    // DELETAR
+    // ======================
+    public void deletarProduto(JavaBeans produto) {
+
+        String sql = "DELETE FROM produto WHERE idcon=?";
+
+        try (Connection con = conectar();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, produto.getIdcon());
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    // ======================
+    // SELECIONAR UM
+    // ======================
+    public void selecionarProduto(JavaBeans produto) {
+
+        String sql = "SELECT * FROM produto WHERE idcon = ?";
+
+        try (Connection con = conectar();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, produto.getIdcon());
+
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+
+                produto.setIdcon(rs.getString("idcon"));
+                produto.setNome(rs.getString("nome"));
+                produto.setDescricao(rs.getString("descricao"));
+                produto.setQuantidade(rs.getInt("quantidade"));
+                produto.setPreco(rs.getDouble("preco"));
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    // ======================
+    // EDITAR
+    // ======================
+    public void editarProduto(JavaBeans produto) {
+
+        String sql = "UPDATE produto SET nome=?, descricao=?, quantidade=?, preco=? WHERE idcon=?";
+
+        try (Connection con = conectar();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, produto.getNome());
+            pst.setString(2, produto.getDescricao());
+            pst.setInt(3, produto.getQuantidade());
+            pst.setDouble(4, produto.getPreco());
+            pst.setString(5, produto.getIdcon());
+
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 }
