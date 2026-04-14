@@ -20,7 +20,6 @@ public class Controller extends HttpServlet {
 
     // =========================
     // GET (NAVEGAÇÃO / BUSCA)
-    // =========================
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -28,16 +27,15 @@ public class Controller extends HttpServlet {
 
         if(action.equals("/estoque")) {
             listarProdutos(request, response);
-
         } else if(action.equals("/edit")) {
             selecionarProduto(request, response);
-
         } else if(action.equals("/delete")) {
             deletarProduto(request, response);
-
         } else if(action.equals("/buscarRemover")) {
            buscarParaRemover(request, response);
-        }else {
+        } else if(action.equals("/buscarEditar")){
+        	buscarParaEditar(request, response);
+        } else {
             response.sendRedirect("estoque");
         }
     }
@@ -57,7 +55,6 @@ public class Controller extends HttpServlet {
 
     // =========================
     // LISTAR
-    // =========================
     protected void listarProdutos(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -71,7 +68,6 @@ public class Controller extends HttpServlet {
 
     // =========================
     // INSERIR
-    // =========================
     protected void inserirProduto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -89,7 +85,6 @@ public class Controller extends HttpServlet {
 
     // =========================
     // SELECIONAR (EDITAR)
-    // =========================
     protected void selecionarProduto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -105,10 +100,22 @@ public class Controller extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
         rd.forward(request, response);
     }
+    
+    protected void buscarParaEditar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+    	String id = request.getParameter("id");
+    	
+    	JavaBeans produto = new JavaBeans();
+    	produto.setIdcon(id);
+    	
+    	dao.selecionarProduto(produto);
+    	request.setAttribute("produto", produto);
+    	
+    	RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
+    	rd.forward(request, response);
+    }
 
     // =========================
     // ATUALIZAR
-    // =========================
     protected void atualizarProduto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -120,15 +127,6 @@ public class Controller extends HttpServlet {
         String quantidade = request.getParameter("quantidade");
         String preco = request.getParameter("preco");
 
-        // 🔥 VALIDAÇÃO (evita erro 500)
-        if(id == null || id.isEmpty() ||
-           quantidade == null || quantidade.isEmpty() ||
-           preco == null || preco.isEmpty()) {
-
-            System.out.println("Dados inválidos!");
-            response.sendRedirect("estoque");
-            return;
-        }
 
         produto.setIdcon(id);
         produto.setNome(nome);
@@ -143,7 +141,6 @@ public class Controller extends HttpServlet {
 
     // =========================
     // DELETAR
-    // =========================
     protected void deletarProduto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
