@@ -1,107 +1,181 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="model.JavaBeans" %>
-<!DOCTYPE html>
-<html lang="pt-br">
+package controller;
 
-<head>
-<meta charset="UTF-8">
-<title>Remover Produto</title>
+import java.io.IOException;
+import java.util.ArrayList;
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import model.DAO;
+import model.JavaBeans;
 
-<style>
-.img-logo-navbar {
-	height: 50px;
-}
+@WebServlet({"/estoque", "/cadastro", "/delete", "/edit", "/update","/remover","/buscarRemover"})
+public class Controller extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-.container {
-	width: 70vh;
-}
+    DAO dao = new DAO();
 
-span {
-	border-radius: 5px;
-	padding: 20px;
-}
-</style>
-</head>
+    // =========================
+    // GET (NAVEGAÇÃO / BUSCA)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-<body>
+        String action = request.getServletPath();
+        
+        System.out.println("ACTION: " + request.getServletPath());
 
-		<!-- NAVBAR -->
-	<nav class="navbar navbar-expand-lg bg-black">
-		<div class="container-fluid text-white">
-			<a class="navbar-brand text-white" href="inicial.html"> <img
-				class="img-logo-navbar" src="img/Logo_reduzido.png"
-				alt="logo ShootOut">
-			</a>
-			
-
-			<div class="collapse navbar-collapse">
-				<ul class="navbar-nav me-auto">
-
-					<li class="nav-item"><a class="nav-link text-white"
-						href="cadastro.html">Cadastrar produtos</a></li>
-
-					<li class="nav-item ">
-                        <a type="button"class="nav-link text-white btn btn-outline-dark" href="editar.jsp">Editar produtos</a>
-                    </li>
-
-				</ul>
-			</div>
-		</div>
-	</nav>
-
-<div class="container mt-4">
-
-    <h2>Remover Produto</h2>
-
-    <!-- 🔎 BUSCAR PRODUTO -->
-    <form action="buscarRemover" method="get">
-        <div class="input-group mb-3">
-            <input type="text" name="id" class="form-control" placeholder="Digite o ID" required>
-            <input type="submit" value="Buscar" class="btn btn-primary">
-            <a href="estoque" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
-
-    <%
-        JavaBeans produto = (JavaBeans) request.getAttribute("produto");
-        if(produto != null){
-    %>
-
-    <!-- 📋 MOSTRAR DADOS -->
-    <div class="mb-3">
-        <label><b>Nome:</b></label>
-        <input type="text" class="form-control" value="<%=produto.getNome() %>" readonly>
-    </div>
-
-    <div class="mb-3">
-        <label><b>Descrição:</b></label>
-        <input type="text" class="form-control" value="<%=produto.getDescricao()%>" readonly>
-    </div>
-
-    <div class="mb-3">
-        <label><b>Quantidade:</b></label>
-        <input type="text" class="form-control" value="<%=produto.getQuantidade()%>" readonly>
-    </div>
-
-    <div class="mb-3">
-        <label><b>Preço:</b></label>
-        <input type="text" class="form-control" value="<%=produto.getPreco()%>" readonly>
-    </div>
-
-    <!-- ❌ CONFIRMAR REMOÇÃO -->
-    <form action="delete" method="get">
-        <input type="hidden" name="id" value="<%=produto.getIdcon()%>">
-        <input type="submit" value="Confirmar Remoção" class="btn btn-danger">
-        <a href="estoque" class="btn btn-secondary">Cancelar</a>
-    </form>
-
-    <%
+        if(action.equals("/estoque")) {
+            listarProdutos(request, response);
+        } 
+        else if(action.equals("/edit")) {
+            selecionarProduto(request, response); 
+        } 
+        else if(action.equals("/delete")) {			//aqui esta o delete
+            deletarProduto(request, response);
+        } 
+        else if(action.equals("/buscarRemover")) {
+           buscarParaRemover(request, response);
+        } 
+        else
+        {
+            response.sendRedirect("estoque");
         }
-    %>
+    }
 
-</div>
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-</body>
-</html>
+        String action = request.getServletPath();
+
+        if(action.equals("/cadastro")) {
+            inserirProduto(request, response);
+
+        } else if(action.equals("/update")) {
+            atualizarProduto(request, response);
+        }
+    }
+
+    // =========================
+    // LISTAR
+    protected void listarProdutos(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        ArrayList<JavaBeans> lista = dao.listarProduto();
+
+        request.setAttribute("produtos", lista);
+
+        RequestDispatcher rd = request.getRequestDispatcher("estoque.jsp");
+        rd.forward(request, response);
+    }
+
+    // =========================
+    // INSERIR
+    protected void inserirProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        JavaBeans produto = new JavaBeans();
+
+        produto.setNome(request.getParameter("nome"));
+        produto.setDescricao(request.getParameter("descricao"));
+        produto.setQuantidade(Integer.parseInt(request.getParameter("quantidade")));
+        produto.setPreco(Double.parseDouble(request.getParameter("preco")));
+
+        dao.inserirProdutos(produto);
+
+        response.sendRedirect("estoque");
+    }
+
+    // =========================
+    // SELECIONAR (EDITAR)
+    protected void selecionarProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String id = request.getParameter("idcon");
+
+        JavaBeans produto = new JavaBeans();
+        produto.setIdcon(id);
+
+        dao.selecionarProduto(produto);
+
+        request.setAttribute("produto", produto);
+
+        RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
+        rd.forward(request, response);
+    }
+    
+    protected void buscarParaEditar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+    	String id = request.getParameter("id");
+
+    	JavaBeans produto = new JavaBeans();
+    	produto.setIdcon(id);
+
+    	dao.selecionarProduto(produto);
+
+    	request.setAttribute("idcon", produto.getIdcon());
+    	request.setAttribute("nome", produto.getNome());
+    	request.setAttribute("descricao", produto.getDescricao());
+    	request.setAttribute("quantidade", produto.getQuantidade());
+    	request.setAttribute("preco", produto.getPreco());
+
+    	RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
+    	rd.forward(request, response);
+    }
+
+    // =========================
+    // ATUALIZAR
+    protected void atualizarProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        JavaBeans produto = new JavaBeans();
+
+        String id = request.getParameter("id");
+        String nome = request.getParameter("nome");
+        String descricao = request.getParameter("descricao");
+        String quantidade = request.getParameter("quantidade");
+        String preco = request.getParameter("preco");
+
+
+        produto.setIdcon(id);
+        produto.setNome(nome);
+        produto.setDescricao(descricao);
+        produto.setQuantidade(Integer.parseInt(quantidade));
+        produto.setPreco(Double.parseDouble(preco));
+
+        dao.editarProduto(produto);
+
+        response.sendRedirect("estoque");
+    }
+
+    // =========================
+    // DELETAR
+    protected void deletarProduto(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        JavaBeans produto = new JavaBeans();
+
+        produto.setIdcon(request.getParameter("id"));
+
+        dao.deletarProduto(produto);
+
+        response.sendRedirect("estoque");
+    }
+    //-------------------------------------------------------
+    protected void buscarParaRemover(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String id = request.getParameter("id");
+
+        JavaBeans produto = new JavaBeans();
+        produto.setIdcon(id);
+
+        dao.selecionarProduto(produto);
+
+        request.setAttribute("produto", produto);
+
+        RequestDispatcher rd = request.getRequestDispatcher("remover.jsp");
+        rd.forward(request, response);
+    }
+}
