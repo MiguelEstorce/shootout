@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -50,6 +51,9 @@ span {
 
 					<li class="nav-item"><a class="nav-link text-white"
 						href="remover.jsp">Remover produtos</a></li>
+						
+					<li class="nav-item"><a class="nav-link text-white"
+						href="estoque.jsp">Estoque</a></li>
 
 				</ul>
 			</div>
@@ -58,55 +62,47 @@ span {
 
 	<div class="container">
 
-		<h2 class="h1 mt-3 mb-3">Editar Produtos</h2>
+    <h2 class="h1 mt-4 mb-3">Editar Produtos</h2>
 
-		<!-- 🔎 FORMULÁRIO DE BUSCA -->
-		<form action="edit" method="get">
-			<div class="input-group mb-3">
-				<input type="text" name="id" class="form-control"
-					placeholder="Digite o ID do produto">
-				<button type="submit" class="btn btn-primary">Buscar</button>
-			</div>
-		</form>
+    <!-- 🔎 FORMULÁRIO DE BUSCA -->
+    <form action="edit" method="get">
+        <div class="input-group mb-3">
+            <input type="text" name="id" class="form-control" placeholder="Digite o ID do produto" required>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
 
-		<!-- 📝 FORMULÁRIO DE EDIÇÃO -->
-		<form action="buscarEditar" method="post">
+    <!-- 📝 FORMULÁRIO DE EDIÇÃO -->
+    <form action="update" method="post">
 
-			<input type="hidden" name="idcon"
-				value="<%=request.getAttribute("idcon") != null ? request.getAttribute("idcon") : ""%>">
+        <div class="mb-3">
+            <input type="text" class="form-control" name="nome" placeholder="Digite o Nome do produto"
+                value="<%=request.getAttribute("nome") != null ? request.getAttribute("nome") : ""%>">
+        </div>
 
-			<div class="mb-3">
-				<input type="text" class="form-control" name="nome"
-					placeholder="Digite o Nome do Produto"
-					value="<%=request.getAttribute("nome") != null ? request.getAttribute("nome") : ""%>">
-			</div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="descricao" placeholder="Digite a Descrição"
+                value="<%=request.getAttribute("descricao") != null ? request.getAttribute("descricao") : ""%>">
+        </div>
 
-			<div class="mb-3">
-				<input type="text" class="form-control" name="descricao"
-					placeholder="Digite a Descrição do Produto"
-					value="<%=request.getAttribute("descricao") != null ? request.getAttribute("descricao") : ""%>">
-			</div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="quantidade" placeholder="Digite a Quantidade"
+                value="<%=request.getAttribute("quantidade") != null ? request.getAttribute("quantidade") : ""%>">
+        </div>
 
-			<div class="mb-3">
-				<input type="text" class="form-control" name="quantidade"
-					placeholder="Digite a Quantidade do Produto"
-					value="<%=request.getAttribute("quantidade") != null ? request.getAttribute("quantidade") : ""%>">
-			</div>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="preco" placeholder="Digite o Preço"
+                value="<%=request.getAttribute("preco") != null ? request.getAttribute("preco") : ""%>">
+        </div>
 
-			<div class="mb-3">
-				<input type="text" class="form-control" name="preco"
-					placeholder="Digite o Preço do Produto"
-					value="<%=request.getAttribute("preco") != null ? request.getAttribute("preco") : ""%>">
-			</div>
+        <div class="mb-3">
+            <input type="submit" class="btn btn-success" value="Confirmar">
+            <a href="estoque" class="btn btn-danger">Cancelar</a>
+        </div>
 
+    </form>
 
-			<div class="mb-3">
-				<input type="submit" class="btn btn-primary" value="Salvar"
-					onclick="salvar()">
-			</div>
-		</form>
-
-	</div>
+</div>
 
 	<script src="scripts/salvar.js"></script>
 	<script
