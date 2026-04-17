@@ -33,7 +33,7 @@
 
     <nav class="navbar navbar-expand-lg bg-black">
         <div class="container-fluid text-white">
-            <a class="navbar-brand text-white" href="inicial.html"><img class="img-logo-navbar"src="img/Logo_reduzido.png" alt="logo ShootOut"></a>
+            <a class="navbar-brand text-white" href="testeindex.jsp"><img class="img-logo-navbar"src="img/Logo_reduzido.png" alt="logo ShootOut"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
