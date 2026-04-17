@@ -41,7 +41,7 @@ public class Controller extends HttpServlet {
         } 
         else
         {
-            response.sendRedirect("estoque");
+            response.sendRedirect("testeindex.jsp");
         }
     }
 
@@ -93,7 +93,7 @@ public class Controller extends HttpServlet {
     protected void selecionarProduto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("idcon");
+        String id = request.getParameter("id");
 
         JavaBeans produto = new JavaBeans();
         produto.setIdcon(id);
@@ -106,7 +106,7 @@ public class Controller extends HttpServlet {
         rd.forward(request, response);
     }
     
-    protected void buscarParaEditar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+   /* protected void buscarParaEditar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
     	String id = request.getParameter("id");
 
     	JavaBeans produto = new JavaBeans();
@@ -122,7 +122,7 @@ public class Controller extends HttpServlet {
 
     	RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
     	rd.forward(request, response);
-    }
+    }*/
 
     // =========================
     // ATUALIZAR
@@ -147,6 +147,7 @@ public class Controller extends HttpServlet {
         dao.editarProduto(produto);
 
         response.sendRedirect("estoque");
+        System.out.println("ID: " + id);
     }
 
     // =========================
