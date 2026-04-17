@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-
+<%@ page import="model.JavaBeans" %>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -38,7 +38,7 @@ span {
 	<!-- NAVBAR -->
 	<nav class="navbar navbar-expand-lg bg-black">
 		<div class="container-fluid text-white">
-			<a class="navbar-brand text-white" href="inicial.html"> <img
+			<a class="navbar-brand text-white" href="testeindex.jsp"> <img
 				class="img-logo-navbar" src="img/Logo_reduzido.png"
 				alt="logo ShootOut">
 			</a>
@@ -69,31 +69,38 @@ span {
         <div class="input-group mb-3">
             <input type="text" name="id" class="form-control" placeholder="Digite o ID do produto" required>
             <button type="submit" class="btn btn-primary">Buscar</button>
+             <a href="estoque" class="btn btn-danger">Cancelar</a>
         </div>
     </form>
+    
+     <%
+        JavaBeans produto = (JavaBeans) request.getAttribute("produto");
+        if(produto != null){
+    %>
 
     <!-- 📝 FORMULÁRIO DE EDIÇÃO -->
     <form action="update" method="post">
+    	 <input type="hidden" name="id" value="<%=produto.getIdcon()%>">
 
-        <div class="mb-3">
-            <input type="text" class="form-control" name="nome" placeholder="Digite o Nome do produto"
-                value="<%=request.getAttribute("nome") != null ? request.getAttribute("nome") : ""%>">
-        </div>
+         <div class="mb-3">
+        <label><b>Nome:</b></label>
+        <input type="text" class="form-control" name="nome" value="<%=produto.getNome()%>">
+    </div>
 
-        <div class="mb-3">
-            <input type="text" class="form-control" name="descricao" placeholder="Digite a Descrição"
-                value="<%=request.getAttribute("descricao") != null ? request.getAttribute("descricao") : ""%>">
-        </div>
+    <div class="mb-3">
+        <label><b>Descrição:</b></label>
+        <input type="text" class="form-control" name="descricao" value="<%=produto.getDescricao()%>">
+    </div>
 
-        <div class="mb-3">
-            <input type="text" class="form-control" name="quantidade" placeholder="Digite a Quantidade"
-                value="<%=request.getAttribute("quantidade") != null ? request.getAttribute("quantidade") : ""%>">
-        </div>
+    <div class="mb-3">
+        <label><b>Quantidade:</b></label>
+        <input type="text" class="form-control" name="quantidade" value="<%=produto.getQuantidade()%>">
+    </div>
 
-        <div class="mb-3">
-            <input type="text" class="form-control" name="preco" placeholder="Digite o Preço"
-                value="<%=request.getAttribute("preco") != null ? request.getAttribute("preco") : ""%>">
-        </div>
+    <div class="mb-3">
+        <label><b>Preço:</b></label>
+        <input type="text" class="form-control" name="preco" value="<%=produto.getPreco()%>">
+    </div>
 
         <div class="mb-3">
             <input type="submit" class="btn btn-success" value="Confirmar">
@@ -101,6 +108,9 @@ span {
         </div>
 
     </form>
+    <%
+    	}
+    %>
 
 </div>
 
