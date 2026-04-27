@@ -1,14 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.Locale" %>
-<%@ page import="model.JavaBeans"%>
-<%@ page import="java.util.ArrayList"%>
-<%
-ArrayList<JavaBeans> lista = (ArrayList<JavaBeans>) request.getAttribute("produtos");
-
-NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-%>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -18,32 +7,28 @@ NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="shortcut icon" href="img/Logo_reduzido.png" type="image/x-icon">
-    <title>inicio</title>
+    <title>Cadastro Produto</title>
 </head>
 
-
 <style>
-    .container {
-        width: 70rem;
-    }
-
-    ul {
-        gap: 20px;
-
-    }
-
-    table {
-        gap: 100px;
-    }
-
     .img-logo-navbar {
 
         height: 50px;
 
     }
+
+    .container {
+        width: 70vh;
+    }
+
+    span{
+        border-radius: 5px;
+        padding: 20px;
+    }
 </style>
 
 <body>
+
 
 
     <nav class="navbar navbar-expand-lg bg-black">
@@ -57,60 +42,56 @@ NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item ">
-                        <a type="button"class="nav-link text-white btn btn-outline-dark" href="cadastro.html">Cadastrar produtos</a>
-                    </li>
-                    <li class="nav-item ">
                         <a type="button"class="nav-link text-white btn btn-outline-dark" href="editar.jsp">Editar produtos</a>
                     </li>
                     <li class="nav-item ">
                         <a type="button"class="nav-link text-white btn btn-outline-dark" href="remover.jsp">Remover produtos</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a type="button"class="nav-link dropdown-toggle text-white btn btn-outline-dark" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Relatório
-                        </a>
-                        <ul class="dropdown-menu bg-white">
-                            <li><a class="dropdown-item text-black" href="relatorio">Gerar Relatório</a></li>
-                        </ul>
+                    <li class="nav-item ">
+                        <a type="button"class="nav-link text-white btn btn-outline-dark" href="estoque">Estoque</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <h1 class="text-center mt-5">Bem-vindo ao sistema de gerenciamento de estoque!</h1>
+    <div class="container">
 
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Produto</th>
-                <th scope="col">Descrição</th>
-                <th scope="col">Quantidade</th>
-                <th scope="col">Preço</th>
-            </tr>
-        </thead>
-  <tbody class="table-group-divider">
- <% if(lista != null){
-for (int i = 0; i < lista.size(); i++) { %>
-    <tr>
-      <th scope="row">
-     <%=lista.get(i).getIdcon()%></th>
-      <td><%=lista.get(i).getNome() %></td> 
-      <td><%=lista.get(i).getDescricao() %></td>
-      <td><%=lista.get(i).getQuantidade() %></td>
-      <td><%= nf.format(lista.get(i).getPreco()) %></td>
-      
-    </tr>
-    <% } } %>
-  </tbody>
-    </table>
+<h2 class="h1 mt-3 mb-3">Cadastrar Produto</h2>
 
-    <script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<form action="cadastro" method="post">
 
+    <div class="input-group mb-3">
+        <input type="text" name="nome" class="form-control" 
+        placeholder="Nome do Produto">
+    </div>
 
+    <div class="input-group mb-3">
+        <textarea name="descricao" class="form-control" 
+        placeholder="Descrição do Produto"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <input type="number" name="quantidade" class="form-control" 
+        placeholder="Quantidade">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text">R$</span>
+        <input type="text" name="preco" class="form-control">
+    </div>
+
+    <div class="input-group mb-3">
+        <button type="submit" class="btn btn-primary rounded ">
+            Enviar
+        </button>
+        <a href="estoque" class="btn btn-danger rounded ms-2">Cancelar</a>
+    </div>
+
+</form>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
