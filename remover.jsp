@@ -10,13 +10,46 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
+.img-logo-navbar {
+	height: 50px;
+}
+
 .container {
-    width: 70vh;
+	width: 70vh;
+}
+
+span {
+	border-radius: 5px;
+	padding: 20px;
 }
 </style>
 </head>
 
 <body>
+<!-- NAVBAR -->
+	<nav class="navbar navbar-expand-lg bg-black">
+		<div class="container-fluid text-white">
+			<a class="navbar-brand text-white" href="testeindex.jsp"> <img
+				class="img-logo-navbar" src="img/Logo_reduzido.png"
+				alt="logo ShootOut">
+			</a>
+
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav me-auto">
+
+					<li class="nav-item"><a class="nav-link text-white"
+						href="cadastro.html">Cadastrar produtos</a></li>
+
+					<li class="nav-item"><a class="nav-link text-white"
+						href="editar.jsp">Editar Produtos</a></li>
+						
+					<li class="nav-item"><a class="nav-link text-white"
+						href="estoque">Estoque</a></li>
+
+				</ul>
+			</div>
+		</div>
+	</nav>
 
 <div class="container mt-4">
 
@@ -26,8 +59,8 @@
     <form action="buscarRemover" method="get">
         <div class="input-group mb-3">
             <input type="text" name="id" class="form-control" placeholder="Digite o ID" required>
-            <input type="submit" value="Buscar" class="btn btn-primary">
-             <a href="estoque" class="btn btn-danger">Cancelar</a>
+            <input type="submit" value="Buscar" class="btn btn-primary rounded ">
+             <a href="estoque" class="btn btn-danger rounded ms-2">Cancelar</a>
         </div>
     </form>
 
@@ -60,8 +93,8 @@
     <!-- ❌ CONFIRMAR REMOÇÃO -->
     <form action="delete" method="get">
         <input type="hidden" name="id" value="<%=produto.getIdcon()%>">
-        <input type="submit" value="Confirmar Remoção" class="btn btn-danger">
-        <a href="estoque" class="btn btn-secondary">Cancelar</a>
+        <input type="submit" value="Confirmar" class="btn btn-success rounded ">
+        <a href="estoque" class="btn btn-secondary rounded ms-2">Cancelar</a>
     </form>
 
     <%
