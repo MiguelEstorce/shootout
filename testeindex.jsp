@@ -10,24 +10,11 @@
 <title>Início</title>
 
 <style>
-.img-logo-navbar {
-	height: 50px;
-}
-
-.container {
-	width: 70vh;
-}
-
 body{
-	background-color: grey;
+    background-color: grey;
 }
-h1,p{
-	color:white;
-}
-
-span {
-	border-radius: 5px;
-	padding: 20px;
+h1, p{
+	color: white;
 }
 </style>
 
@@ -50,10 +37,13 @@ span {
         <a href="edit" class="btn btn-warning btn-lg">✏️ Editar Produto</a>
 
         <a href="buscarRemover" class="btn btn-danger btn-lg">🗑️ Remover Produto</a>
+        
+        <a href="relatorio" class="btn btn-dark btn-lg">📄 Gerar Relatório</a>
 
     </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
