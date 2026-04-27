@@ -3,6 +3,12 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.DAO;
 import model.JavaBeans;
 
-@WebServlet({"/estoque", "/cadastro", "/delete", "/edit", "/update","/remover","/buscarRemover"})
+@WebServlet({"/estoque", "/cadastro", "/delete", "/edit", "/update","/remover","/buscarRemover","/relatorio"})
 public class Controller extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -38,7 +44,10 @@ public class Controller extends HttpServlet {
         } 
         else if(action.equals("/buscarRemover")) {
            buscarParaRemover(request, response);
-        } 
+        }
+        else if(action.equals("/relatorio")) {
+            gerarRelatorio(request, response);
+         }  
         else
         {
             response.sendRedirect("testeindex.jsp");
@@ -178,5 +187,57 @@ public class Controller extends HttpServlet {
 
         RequestDispatcher rd = request.getRequestDispatcher("remover.jsp");
         rd.forward(request, response);
+    }
+    
+    //relatorio em pdf
+    
+    protected void gerarRelatorio(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	Document documento = new Document();
+    	try {
+			//tipo do conteudo
+    		response.setContentType("application/pdf");
+    		
+    		//nome do documento
+    		 response.addHeader("Content-Disposition", "attachment; filename=produtos.pdf");
+    		 
+    		//criando documento
+    		PdfWriter.getInstance(documento, response.getOutputStream());
+    		
+    		//abrindo o documento
+    		documento.open();
+    		documento.add(new Paragraph("Lista de Produtos:"));
+    		documento.add(new Paragraph(" "));
+    		//criando tabela
+    		
+    		PdfPTable tabela = new PdfPTable(4);
+    		
+    		//cabeçalho
+    		PdfPCell col1 = new PdfPCell(new Paragraph("Nome"));
+    		PdfPCell col2 = new PdfPCell(new Paragraph("Descrição"));
+    		PdfPCell col3 = new PdfPCell(new Paragraph("quantidade"));
+    		PdfPCell col4 = new PdfPCell(new Paragraph("Preço"));
+    		tabela.addCell(col1);
+    		tabela.addCell(col2);
+    		tabela.addCell(col3);
+    		tabela.addCell(col4);
+    		
+    		//informações da tabela
+    		
+    		ArrayList<JavaBeans> lista = dao.listarProduto();
+    		for (int i = 0; i < lista.size(); i++) {
+    			tabela.addCell(lista.get(i).getNome());
+    			tabela.addCell(lista.get(i).getDescricao());
+    			tabela.addCell(String.valueOf(lista.get(i).getQuantidade()));
+    			tabela.addCell(String.valueOf(lista.get(i).getPreco()));
+    		}
+    		documento.add(tabela);
+    		
+    		documento.close();
+		} catch (Exception e) {
+			System.out.println(e);
+			documento.close();
+		}
+    	
     }
 }
