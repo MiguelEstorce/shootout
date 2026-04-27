@@ -53,7 +53,7 @@ span {
 						href="remover.jsp">Remover produtos</a></li>
 						
 					<li class="nav-item"><a class="nav-link text-white"
-						href="estoque.jsp">Estoque</a></li>
+						href="estoque">Estoque</a></li>
 
 				</ul>
 			</div>
@@ -68,8 +68,8 @@ span {
     <form action="edit" method="get">
         <div class="input-group mb-3">
             <input type="text" name="id" class="form-control" placeholder="Digite o ID do produto" required>
-            <button type="submit" class="btn btn-primary">Buscar</button>
-             <a href="estoque" class="btn btn-danger">Cancelar</a>
+            <button type="submit" class="btn btn-primary rounded ">Buscar</button>
+             <a href="estoque" class="btn btn-danger rounded ms-2">Cancelar</a>
         </div>
     </form>
     
@@ -103,8 +103,8 @@ span {
     </div>
 
         <div class="mb-3">
-            <input type="submit" class="btn btn-success" value="Confirmar">
-            <a href="estoque" class="btn btn-danger">Cancelar</a>
+            <input type="submit" class="btn btn-success rounded " value="Confirmar">
+            <a href="estoque" class="btn btn-danger rounded ms-2">Cancelar</a>
         </div>
 
     </form>
@@ -114,7 +114,6 @@ span {
 
 </div>
 
-	<script src="scripts/salvar.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
