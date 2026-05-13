@@ -3,12 +3,6 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,226 +12,139 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.DAO;
 import model.JavaBeans;
 
-@WebServlet({"/estoque", "/cadastro", "/delete", "/edit", "/update","/remover","/buscarRemover","/relatorio"})
+/**
+ * Servlet implementation class Controller
+ */
+@WebServlet({"/cadastro","/deletar","/edit","navegacao","/cadastrou","/cadastrol"})
 public class Controller extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
+       
+	DAO dao = new DAO();
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
+		 String action = request.getServletPath();
+	        
+	        System.out.println("ACTION: " + request.getServletPath());
 
-    DAO dao = new DAO();
+	        if(action.equals("/")) {
+	           
+	        } 
+	        else if(action.equals("/cadastrou")) { //cadastro do usuario
+	             cadastrarUsuario(request, response);
+	        } 
+	        else if(action.equals("/cadastrol")) { //cadastro do lojista
+	             cadastrarLojista(request, response);
+	        } 
+	        else if(action.equals("/loginu")) { //login do usuario
+	             loginUsuario(request, response);
+	        } 
+	        else if(action.equals("/loginl")) { //login do lojista
+	             loginLojista(request, response);
+	        } 
+	        else if(action.equals("/cadastro")) {
+	        	inserirAnuncio(request, response);
+	            
+	        } 
+	        else if(action.equals("/deletar")) {
+	          deletarAnuncio(request, response);
+	        }
+	        else if(action.equals("/edit")) {
+	        	editarAnuncio(request, response);
+	         }
+	        else if(action.equals("/navegacao")) {
+	        	listarAnuncios(request, response);
+	         }
+	        else if(action.equals("/")) {
+	        	
+	         }
+	        else if(action.equals("/")) {
+	        	
+	         }
+	        else if(action.equals("/")) {
+	        	
+	         }
+	        else
+	        {
+	            response.sendRedirect("/"); //voltar para pagina inicial
+	        }
+		
+	}
 
-    // =========================
-    // GET (NAVEGAÇÃO / BUSCA)
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+	
+	//-------------------------------CADASTRO----USUARIO--------------------------------------------------------------------------
+	
+	protected void cadastrarUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	//-------------------------------CADASTRAR----LOJISTA-------------------------------------------------------------------------
+	
+	protected void cadastrarLojista(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	//-------------------------------LOGIN----USUARIO-----------------------------------------------------------------------------
+	
+	protected void loginUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	//-------------------------------LGIN----LOJISTA------------------------------------------------------------------------------
+	
+	protected void loginLojista(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	//-------------------------------INSERIR----ANUNCIO---------------------------------------------------------------------------
+	
+	protected void inserirAnuncio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		JavaBeans anuncio = new JavaBeans();
+		
+		anuncio.setNome(request.getParameter("nome"));
+		anuncio.setModelo(request.getParameter("modelo"));
+		anuncio.setMarca(request.getParameter("marca"));
+		anuncio.setCarroceria(request.getParameter("carroceria"));
+		anuncio.setDescricao(request.getParameter("descricao"));
+		anuncio.setAno(Integer.parseInt(request.getParameter("ano")));
+		anuncio.setKilometragem(Integer.parseInt(request.getParameter("kilometragem")));
+		
+		// dao.inserirAnuncios(anuncio); requer o dao
+		
+	}
+	
+	//-------------------------------DELETAR----ANUNCIO---------------------------------------------------------------------------
+	
+	protected void deletarAnuncio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	//-------------------------------EDITAR----ANUNCIO---------------------------------------------------------------------------
 
-        String action = request.getServletPath();
-        
-        System.out.println("ACTION: " + request.getServletPath());
-
-        if(action.equals("/estoque")) {
-            listarProdutos(request, response);
-        } 
-        else if(action.equals("/edit")) {
-            selecionarProduto(request, response); 
-        } 
-        else if(action.equals("/delete")) {			//aqui esta o delete
-            deletarProduto(request, response);
-        } 
-        else if(action.equals("/buscarRemover")) {
-           buscarParaRemover(request, response);
-        }
-        else if(action.equals("/relatorio")) {
-            gerarRelatorio(request, response);
-         }  
-        else
-        {
-            response.sendRedirect("testeindex.jsp");
-        }
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String action = request.getServletPath();
-
-        if(action.equals("/cadastro")) {
-            inserirProduto(request, response);
-
-        } else if(action.equals("/update")) {
-            atualizarProduto(request, response);
-        }
-    }
-
-    // =========================
-    // LISTAR
-    protected void listarProdutos(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        ArrayList<JavaBeans> lista = dao.listarProduto();
-
-        request.setAttribute("produtos", lista);
-
-        RequestDispatcher rd = request.getRequestDispatcher("estoque.jsp");
-        rd.forward(request, response);
-    }
-
-    // =========================
-    // INSERIR
-    protected void inserirProduto(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        JavaBeans produto = new JavaBeans();
-
-        produto.setNome(request.getParameter("nome"));
-        produto.setDescricao(request.getParameter("descricao"));
-        produto.setQuantidade(Integer.parseInt(request.getParameter("quantidade")));
-        produto.setPreco(Double.parseDouble(request.getParameter("preco")));
-
-        dao.inserirProdutos(produto);
-
-        response.sendRedirect("estoque");
-    }
-
-    // =========================
-    // SELECIONAR (EDITAR)
-    protected void selecionarProduto(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String id = request.getParameter("id");
-
-        JavaBeans produto = new JavaBeans();
-        produto.setIdcon(id);
-
-        dao.selecionarProduto(produto);
-
-        request.setAttribute("produto", produto);
-
-        RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
-        rd.forward(request, response);
-    }
-    
-   /* protected void buscarParaEditar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
-    	String id = request.getParameter("id");
-
-    	JavaBeans produto = new JavaBeans();
-    	produto.setIdcon(id);
-
-    	dao.selecionarProduto(produto);
-
-    	request.setAttribute("idcon", produto.getIdcon());
-    	request.setAttribute("nome", produto.getNome());
-    	request.setAttribute("descricao", produto.getDescricao());
-    	request.setAttribute("quantidade", produto.getQuantidade());
-    	request.setAttribute("preco", produto.getPreco());
-
-    	RequestDispatcher rd = request.getRequestDispatcher("editar.jsp");
-    	rd.forward(request, response);
-    }*/
-
-    // =========================
-    // ATUALIZAR
-    protected void atualizarProduto(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        JavaBeans produto = new JavaBeans();
-
-        String id = request.getParameter("id");
-        String nome = request.getParameter("nome");
-        String descricao = request.getParameter("descricao");
-        String quantidade = request.getParameter("quantidade");
-        String preco = request.getParameter("preco");
-
-
-        produto.setIdcon(id);
-        produto.setNome(nome);
-        produto.setDescricao(descricao);
-        produto.setQuantidade(Integer.parseInt(quantidade));
-        produto.setPreco(Double.parseDouble(preco));
-
-        dao.editarProduto(produto);
-
-        response.sendRedirect("estoque");
-        System.out.println("ID: " + id);
-    }
-
-    // =========================
-    // DELETAR
-    protected void deletarProduto(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        JavaBeans produto = new JavaBeans();
-
-        produto.setIdcon(request.getParameter("id"));
-
-        dao.deletarProduto(produto);
-
-        response.sendRedirect("estoque");
-    }
-    //-------------------------------------------------------
-    protected void buscarParaRemover(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String id = request.getParameter("id");
-
-        JavaBeans produto = new JavaBeans();
-        produto.setIdcon(id);
-
-        dao.selecionarProduto(produto);
-
-        request.setAttribute("produto", produto);
-
-        RequestDispatcher rd = request.getRequestDispatcher("remover.jsp");
-        rd.forward(request, response);
-    }
-    
-    //relatorio em pdf
-    
-    protected void gerarRelatorio(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	Document documento = new Document();
-    	try {
-			//tipo do conteudo
-    		response.setContentType("application/pdf");
-    		
-    		//nome do documento
-    		 response.addHeader("Content-Disposition", "attachment; filename=produtos.pdf");
-    		 
-    		//criando documento
-    		PdfWriter.getInstance(documento, response.getOutputStream());
-    		
-    		//abrindo o documento
-    		documento.open();
-    		documento.add(new Paragraph("Lista de Produtos:"));
-    		documento.add(new Paragraph(" "));
-    		//criando tabela
-    		
-    		PdfPTable tabela = new PdfPTable(4);
-    		
-    		//cabeçalho
-    		PdfPCell col1 = new PdfPCell(new Paragraph("Nome"));
-    		PdfPCell col2 = new PdfPCell(new Paragraph("Descrição"));
-    		PdfPCell col3 = new PdfPCell(new Paragraph("quantidade"));
-    		PdfPCell col4 = new PdfPCell(new Paragraph("Preço"));
-    		tabela.addCell(col1);
-    		tabela.addCell(col2);
-    		tabela.addCell(col3);
-    		tabela.addCell(col4);
-    		
-    		//informações da tabela
-    		
-    		ArrayList<JavaBeans> lista = dao.listarProduto();
-    		for (int i = 0; i < lista.size(); i++) {
-    			tabela.addCell(lista.get(i).getNome());
-    			tabela.addCell(lista.get(i).getDescricao());
-    			tabela.addCell(String.valueOf(lista.get(i).getQuantidade()));
-    			tabela.addCell(String.valueOf(lista.get(i).getPreco()));
-    		}
-    		documento.add(tabela);
-    		
-    		documento.close();
-		} catch (Exception e) {
-			System.out.println(e);
-			documento.close();
-		}
-    	
-    }
+	protected void editarAnuncio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	//---------------------------------------------------------------------------------------------------------------------------
+	
+	protected void listarAnuncios(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ArrayList<JavaBeans> lista = dao.listarAnuncio();  //DAO
+		
+		request.setAttribute("anuncios", lista);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("listar.jsp");
+		rd.forward(request, response);
+	}
+	
 }
